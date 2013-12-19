@@ -39,6 +39,7 @@ public final class ProductResultHandler extends ResultHandler {
 //      R.string.button_custom_product_search
 	  R.string.button_save,
 	  R.string.button_discard,
+	  R.string.button_rescan,
   };
 
   public ProductResultHandler(Activity activity, ParsedResult result, Result rawResult) {
@@ -78,12 +79,16 @@ public final class ProductResultHandler extends ResultHandler {
     switch (index) {
 		case 0:
 			activity.setResult(Activity.RESULT_OK, intent);
+			activity.finish(); //return to the activity that called CaptureActivity
 			break;
 		case 1:
 			activity.setResult(Activity.RESULT_CANCELED, intent);
+			activity.finish(); //return to the activity that called CaptureActivity
+			break;
+		case 2:
+			((CaptureActivity) activity).restartPreviewAfterDelay(0L);
 			break;
     }
-	activity.finish(); //return to the activity that called CaptureActivity
 	
   }
 
