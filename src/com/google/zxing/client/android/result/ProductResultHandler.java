@@ -38,7 +38,7 @@ public final class ProductResultHandler extends ResultHandler {
 //      R.string.button_web_search,
 //      R.string.button_custom_product_search
 	  R.string.button_save,
-	  R.string.button_discard,
+//	  R.string.button_discard,
 	  R.string.button_rescan,
   };
 
@@ -82,10 +82,10 @@ public final class ProductResultHandler extends ResultHandler {
 			activity.finish(); //return to the activity that called CaptureActivity
 			break;
 		case 1:
-			activity.setResult(Activity.RESULT_CANCELED, intent);
-			activity.finish(); //return to the activity that called CaptureActivity
-			break;
-		case 2:
+//			activity.setResult(Activity.RESULT_CANCELED, intent);
+//			activity.finish(); //return to the activity that called CaptureActivity
+//			break;
+//		case 2:
 			((CaptureActivity) activity).restartPreviewAfterDelay(0L);
 			break;
     }

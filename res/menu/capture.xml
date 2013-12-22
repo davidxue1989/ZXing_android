@@ -32,8 +32,8 @@
 <!--         android:icon="@android:drawable/ic_menu_help" -->
 <!--         android:orderInCategory="4" -->
 <!--         android:showAsAction="withText"/> -->
-  <item android:id="@+id/menu_settings"
-        android:title="@string/menu_settings"
-        android:icon="@android:drawable/ic_menu_preferences"
-        android:orderInCategory="3"/>
+<!--   <item android:id="@+id/menu_settings" -->
+<!--         android:title="@string/menu_settings" -->
+<!--         android:icon="@android:drawable/ic_menu_preferences" -->
+<!--         android:orderInCategory="3"/> -->
 </menu>

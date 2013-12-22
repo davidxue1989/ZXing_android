@@ -16,21 +16,12 @@
 
 package com.google.zxing.client.android;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.DecodeHintType;
-import com.google.zxing.Result;
-import com.google.zxing.ResultMetadataType;
-import com.google.zxing.ResultPoint;
-import com.google.zxing.client.android.camera.CameraManager;
-import com.google.zxing.client.android.clipboard.ClipboardInterface;
-import com.google.zxing.client.android.history.HistoryActivity;
-import com.google.zxing.client.android.history.HistoryItem;
-import com.google.zxing.client.android.history.HistoryManager;
-import com.google.zxing.client.android.result.ResultButtonListener;
-import com.google.zxing.client.android.result.ResultHandler;
-import com.google.zxing.client.android.result.ResultHandlerFactory;
-import com.google.zxing.client.android.result.supplement.SupplementalInfoRetriever;
-import com.google.zxing.client.android.share.ShareActivity;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -61,12 +52,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.Map;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.DecodeHintType;
+import com.google.zxing.Result;
+import com.google.zxing.ResultMetadataType;
+import com.google.zxing.ResultPoint;
+import com.google.zxing.client.android.camera.CameraManager;
+import com.google.zxing.client.android.clipboard.ClipboardInterface;
+import com.google.zxing.client.android.history.HistoryItem;
+import com.google.zxing.client.android.history.HistoryManager;
+import com.google.zxing.client.android.result.ResultButtonListener;
+import com.google.zxing.client.android.result.ResultHandler;
+import com.google.zxing.client.android.result.ResultHandlerFactory;
+import com.google.zxing.client.android.result.supplement.SupplementalInfoRetriever;
 
 /**
  * This activity opens the camera and does the actual scanning on a background thread. It draws a
@@ -140,7 +138,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     beepManager = new BeepManager(this);
     ambientLightManager = new AmbientLightManager(this);
 
+    //dxchanged
     PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+    SharedPreferences.Editor prefsEdit = PreferenceManager.getDefaultSharedPreferences(this).edit();
+    prefsEdit.putBoolean(PreferencesActivity.KEY_DECODE_1D, false);
+    prefsEdit.putBoolean(PreferencesActivity.KEY_DECODE_DATA_MATRIX, false);
+    prefsEdit.commit();
   }
 
   @Override
@@ -288,7 +291,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
           return true;
         }
         if ((source == IntentSource.NONE || source == IntentSource.ZXING_LINK) && lastResult != null) {
-          restartPreviewAfterDelay(0L);
+        	//dxchangced
+//          restartPreviewAfterDelay(0L);
+          Intent intent = new Intent(this, CaptureActivity.class);
+          setResult(Activity.RESULT_CANCELED, intent);
+		  finish(); //return to the activity that called Capture
           return true;
         }
         break;
@@ -335,15 +342,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 //		return super.onOptionsItemSelected(item);
 //	}
     
-	if (item.getItemId() == R.id.menu_settings) {
-		intent.setClassName(this, PreferencesActivity.class.getName());
-		startActivity(intent);
-	} else {
+//	if (item.getItemId() == R.id.menu_settings) {
+//		intent.setClassName(this, PreferencesActivity.class.getName());
+//		startActivity(intent);
+//	} else {
 		return super.onOptionsItemSelected(item);
-	}
-    return true;
-    
-    
+//	}
+//    return true;
+		
   }
 
   @Override
