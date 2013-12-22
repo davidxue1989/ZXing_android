@@ -335,13 +335,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 //		return super.onOptionsItemSelected(item);
 //	}
     
-//	if (item.getItemId() == R.id.menu_settings) {
-//		intent.setClassName(this, PreferencesActivity.class.getName());
-//		startActivity(intent);
-//	} else {
+	if (item.getItemId() == R.id.menu_settings) {
+		intent.setClassName(this, PreferencesActivity.class.getName());
+		startActivity(intent);
+	} else {
 		return super.onOptionsItemSelected(item);
-//	}
-//    return true;
+	}
+    return true;
     
     
   }
