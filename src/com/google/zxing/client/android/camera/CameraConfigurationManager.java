@@ -120,8 +120,10 @@ final class CameraConfigurationManager {
         parameters.setColorEffect(colorMode);
       }
     }
-
+    
+    
     parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
+    
     camera.setParameters(parameters);
 
     Camera.Parameters afterParameters = camera.getParameters();
@@ -132,6 +134,10 @@ final class CameraConfigurationManager {
       cameraResolution.x = afterSize.width;
       cameraResolution.y = afterSize.height;
     }
+    
+    //dxchange
+    camera.setDisplayOrientation(90);
+    
   }
 
   Point getCameraResolution() {

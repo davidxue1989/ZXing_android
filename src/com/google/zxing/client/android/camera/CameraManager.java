@@ -46,7 +46,7 @@ public final class CameraManager {
 
   private final Context context;
   private final CameraConfigurationManager configManager;
-  private Camera camera;
+  public Camera camera;
   private AutoFocusManager autoFocusManager;
   private Rect framingRect;
   private Rect framingRectInPreview;
@@ -104,7 +104,7 @@ public final class CameraManager {
       // Reset:
       if (parametersFlattened != null) {
         parameters = theCamera.getParameters();
-        parameters.unflatten(parametersFlattened);
+        parameters.unflatten(parametersFlattened);        
         try {
           theCamera.setParameters(parameters);
           configManager.setDesiredCameraParameters(theCamera, true);

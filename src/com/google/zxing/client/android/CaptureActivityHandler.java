@@ -48,7 +48,8 @@ public final class CaptureActivityHandler extends Handler {
   private static final String TAG = CaptureActivityHandler.class.getSimpleName();
 
   private final CaptureActivity activity;
-  private final DecodeThread decodeThread;
+//  private final DecodeThread decodeThread;
+  private DecodeThread decodeThread; //dxchanged
   private State state;
   private final CameraManager cameraManager;
 
@@ -64,9 +65,11 @@ public final class CaptureActivityHandler extends Handler {
                          String characterSet,
                          CameraManager cameraManager) {
     this.activity = activity;
-    decodeThread = new DecodeThread(activity, decodeFormats, baseHints, characterSet,
-        new ViewfinderResultPointCallback(activity.getViewfinderView()));
+	decodeThread = new DecodeThread(activity, decodeFormats, baseHints, characterSet,
+			new ViewfinderResultPointCallback(activity.getViewfinderView()));
     decodeThread.start();
+    //dxchanged
+//    if (!activity.isCCC)
     state = State.SUCCESS;
 
     // Start ourselves capturing previews and decoding.
