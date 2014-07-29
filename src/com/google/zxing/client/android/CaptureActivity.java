@@ -460,14 +460,6 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-	  Camera mCamera = cameraManager.camera; 
-	  Camera.Parameters parameters = mCamera.getParameters();
-	  if (surfaceView.mPreviewSize != null) {
-			parameters.setPreviewSize(surfaceView.mPreviewSize.width,
-					surfaceView.mPreviewSize.height);
-			mCamera.setParameters(parameters);
-			mCamera.startPreview();
-	  }
   }
 
   /**
@@ -747,7 +739,9 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
     }
     try {
       cameraManager.openDriver(surfaceHolder);
+      //dxchange
       surfaceView.mSupportedPreviewSizes = cameraManager.camera.getParameters().getSupportedPreviewSizes();
+      surfaceView.cameraManager = cameraManager;
 
       // Creating the handler starts the preview, which can also throw a RuntimeException.
       if (handler == null) { //dxchanged
