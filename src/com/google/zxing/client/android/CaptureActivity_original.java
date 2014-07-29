@@ -74,7 +74,7 @@ package com.google.zxing.client.android;
 // * @author dswitkin@google.com (Daniel Switkin)
 // * @author Sean Owen
 // */
-//public class CaptureActivity_original extends Activity implements SurfaceHolder.Callback {
+//public class CaptureActivity extends Activity implements SurfaceHolder.Callback {
 //
 //  private static final String TAG = CaptureActivity_original.class.getSimpleName();
 //

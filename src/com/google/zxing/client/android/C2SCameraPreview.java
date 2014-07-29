@@ -10,6 +10,9 @@ import android.view.SurfaceView;
 
 import com.google.zxing.client.android.camera.CameraManager;
 
+//dx: custom surface view to try correct nexus 7 distortion issue
+//--> doesn't seem to work
+
 public final class C2SCameraPreview extends SurfaceView {
 
 	public List<Camera.Size> mSupportedPreviewSizes;
