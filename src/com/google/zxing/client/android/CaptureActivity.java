@@ -185,19 +185,19 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 
     resetStatusView();
 
+    //dxmark
     //dxchange
 //    SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-    surfaceView = new C2SCameraPreview(this);
-  
+    surfaceView = new C2SCameraPreview(this);  
     FrameLayout frame = (FrameLayout) findViewById(R.id.preview_frame);
-
-    SurfaceHolder surfaceHolder = (SurfaceHolder) frame;
+    frame.addView(surfaceView);
+//    SurfaceHolder surfaceHolder = (SurfaceHolder) frame;
+    SurfaceHolder surfaceHolder = surfaceView.getHolder();
+    
     if (hasSurface) {
       // The activity was paused but not stopped, so the surface still exists. Therefore
       // surfaceCreated() won't be called, so init the camera here.
       initCamera(surfaceHolder);
-      FrameLayout frame = (FrameLayout) findViewById(R.id.preview_frame);
-      frame.addView(surfaceView);
     } else {
       // Install the callback and wait for surfaceCreated() to init the camera.
       surfaceHolder.addCallback(this);
@@ -436,8 +436,9 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
     if (!hasSurface) {
       hasSurface = true;
       initCamera(holder);
-      FrameLayout frame = (FrameLayout) findViewById(R.id.preview_frame);
-      frame.addView(surfaceView);
+      //dxmark
+//      FrameLayout frame = (FrameLayout) findViewById(R.id.preview_frame);
+//      frame.addView(surfaceView);
 //      //dxchange
 //      FrameLayout frame = (FrameLayout) findViewById(R.id.preview_frame);
 //      int scrnw = frame.getMeasuredWidth();
