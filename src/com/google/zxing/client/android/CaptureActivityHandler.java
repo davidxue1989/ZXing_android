@@ -74,7 +74,10 @@ public final class CaptureActivityHandler extends Handler {
 
     // Start ourselves capturing previews and decoding.
     this.cameraManager = cameraManager;
-    cameraManager.startPreview();
+    
+    //dxchange: will start preview in CaptureActivity when surfaceView.setPreviewSize is called
+//    cameraManager.startPreview();
+    
     restartPreviewAndDecode();
   }
 

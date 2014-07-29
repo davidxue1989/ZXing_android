@@ -29,6 +29,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -185,7 +187,6 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 
     resetStatusView();
 
-    //dxmark
     //dxchange
 //    SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
     surfaceView = new C2SCameraPreview(this);  
@@ -200,6 +201,26 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
       initCamera(surfaceHolder);
     } else {
       // Install the callback and wait for surfaceCreated() to init the camera.
+//
+//    	    if (!hasSurface) {
+    	      hasSurface = true;
+    	      initCamera(surfaceHolder);
+//    	      FrameLayout frame = (FrameLayout) findViewById(R.id.preview_frame);
+//    	      frame.addView(surfaceView);
+//    	      //dxchange
+//    	      FrameLayout frame = (FrameLayout) findViewById(R.id.preview_frame);
+//    	      int scrnw = frame.getMeasuredWidth();
+//    	      int scrnh = frame.getMeasuredHeight();
+//    	      Size camSz = cameraManager.camera.getParameters().getPreviewSize(); 
+//    	      RetSize previewSz = getPreviewResolutionUnstretched(scrnw, scrnh, camSz.height, camSz.width);//swap cam's height and width since it's portrait
+//    	      SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
+//    	      surfaceView.getHolder().setFixedSize(previewSz.w, previewSz.h);
+////    	      surfaceView.getHolder().setFixedSize(scrnw, previewSz.h);
+////    	      surfaceView.getHolder().setFixedSize(1200, 2133);
+    	      
+//    	    }
+    	
+    	
       surfaceHolder.addCallback(this);
     }
 
@@ -430,27 +451,10 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 
   @Override
   public void surfaceCreated(SurfaceHolder holder) {
-    if (holder == null) {
-      Log.e(TAG, "*** WARNING *** surfaceCreated() gave us a null surface!");
+  	if (holder == null) {
+  	  Log.e(TAG, "*** WARNING *** surfaceCreated() gave us a null surface!");
     }
-    if (!hasSurface) {
-      hasSurface = true;
-      initCamera(holder);
-      //dxmark
-//      FrameLayout frame = (FrameLayout) findViewById(R.id.preview_frame);
-//      frame.addView(surfaceView);
-//      //dxchange
-//      FrameLayout frame = (FrameLayout) findViewById(R.id.preview_frame);
-//      int scrnw = frame.getMeasuredWidth();
-//      int scrnh = frame.getMeasuredHeight();
-//      Size camSz = cameraManager.camera.getParameters().getPreviewSize(); 
-//      RetSize previewSz = getPreviewResolutionUnstretched(scrnw, scrnh, camSz.height, camSz.width);//swap cam's height and width since it's portrait
-//      SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-//      surfaceView.getHolder().setFixedSize(previewSz.w, previewSz.h);
-////      surfaceView.getHolder().setFixedSize(scrnw, previewSz.h);
-////      surfaceView.getHolder().setFixedSize(1200, 2133);
-      
-    }
+  	surfaceView.setPreviewSizeAndStart(cameraManager);
   }
   
   @Override
@@ -741,7 +745,6 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
       cameraManager.openDriver(surfaceHolder);
       //dxchange
       surfaceView.mSupportedPreviewSizes = cameraManager.camera.getParameters().getSupportedPreviewSizes();
-      surfaceView.cameraManager = cameraManager;
 
       // Creating the handler starts the preview, which can also throw a RuntimeException.
       if (handler == null) { //dxchanged

@@ -2,18 +2,18 @@ package com.google.zxing.client.android;
 
 import java.util.List;
 
-import com.google.zxing.client.android.camera.CameraManager;
-
 import android.content.Context;
 import android.hardware.Camera;
-import android.util.AttributeSet;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Size;
 import android.view.SurfaceView;
+
+import com.google.zxing.client.android.camera.CameraManager;
 
 public final class C2SCameraPreview extends SurfaceView {
 
 	public List<Camera.Size> mSupportedPreviewSizes;
-	private Camera.Size mPreviewSize;
-	public CameraManager cameraManager;
+	public Camera.Size mPreviewSize;
 	
 	public C2SCameraPreview(Context context) {
 		super(context);
@@ -51,6 +51,21 @@ public final class C2SCameraPreview extends SurfaceView {
         return optimalSize;
     }
 	
+	public void setPreviewSizeAndStart(CameraManager cameraManager) {
+		Camera camera = cameraManager.camera;
+		Camera.Parameters parameters = camera.getParameters();
+		if (mPreviewSize != null) {
+			parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
+			camera.setParameters(parameters);
+			cameraManager.startPreview();
+
+			Parameters p = camera.getParameters();
+			Size sz = p.getPreviewSize();
+			int a = 0;
+			a++;
+		}
+	}
+	
 	@Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
@@ -59,14 +74,6 @@ public final class C2SCameraPreview extends SurfaceView {
 
         if (mSupportedPreviewSizes != null) {
            mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
-           
-     	  Camera camera = cameraManager.camera; 
-    	  Camera.Parameters parameters = camera.getParameters();
-    	  if (mPreviewSize != null) {
-    			parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
-    			camera.setParameters(parameters);
-    			camera.startPreview();
-    	  }
         }
     }
 	
