@@ -28,18 +28,18 @@ final class PreviewCallback implements Camera.PreviewCallback {
 	private static final String TAG = PreviewCallback.class.getSimpleName();
 
 	// dxchange
-	 private final CameraConfigurationManager configManager;
-//	private final C2SCameraPreview cameraPreview;
+	// private final CameraConfigurationManager configManager;
+	private final C2SCameraPreview cameraPreview;
 	public Point cameraResolution = null;
 	private Handler previewHandler;
 	private int previewMessage;
 
-	 PreviewCallback(CameraConfigurationManager configManager) {
-	 this.configManager = configManager;
-	 }
-//	PreviewCallback(C2SCameraPreview cameraPreview) {
-//		this.cameraPreview = cameraPreview;
-//	}
+	// PreviewCallback(CameraConfigurationManager configManager) {
+	// this.configManager = configManager;
+	// }
+	PreviewCallback(C2SCameraPreview cameraPreview) {
+		this.cameraPreview = cameraPreview;
+	}
 
 	void setHandler(Handler previewHandler, int previewMessage) {
 		this.previewHandler = previewHandler;
@@ -49,7 +49,7 @@ final class PreviewCallback implements Camera.PreviewCallback {
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
 		// dxchange
-		 Point cameraResolution = configManager.getCameraResolution();
+		// Point cameraResolution = configManager.getCameraResolution();
 		Handler thePreviewHandler = previewHandler;
 		if (cameraResolution != null && thePreviewHandler != null) {
 			Message message = thePreviewHandler.obtainMessage(previewMessage, cameraResolution.x, cameraResolution.y, data);
