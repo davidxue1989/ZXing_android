@@ -206,7 +206,20 @@ public class CaptureActivity extends Activity {
 		matrix.postRotate(90);
 		// recreate the new Bitmap
 		Bitmap resizedBitmap = Bitmap.createBitmap(bitmapScaled, 0, 0, w, h, matrix, true);
-		return resizedBitmap;
+		
+
+		//crop the bitmap
+		float cropFactor = 0.6f;				
+		int width = (int)(resizedBitmap.getWidth()*cropFactor);
+		int height = (int)(resizedBitmap.getHeight()*cropFactor);				
+		int dimension = Math.min(width, height);
+		int startX = (int) ((resizedBitmap.getWidth() - dimension)*0.5);
+		int startY = (int) ((resizedBitmap.getHeight() - dimension)*0.5);	
+		Bitmap bm = Bitmap.createBitmap(resizedBitmap, startX, startY, dimension, dimension);
+		resizedBitmap.recycle();
+		resizedBitmap = null;
+		
+		return bm;
 	}
 	
 

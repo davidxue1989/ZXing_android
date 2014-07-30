@@ -49,7 +49,8 @@ public class ConfirmScanActivity extends Activity {
 				bm = null;
 			}
 			
-			bm = CaptureActivity.getCCCPhoto(this, 90);
+			bm = CaptureActivity.getCCCPhoto(this, 90);			
+			
 			ImageView iv = (ImageView) findViewById(R.id.image);
 			
 			iv.setImageBitmap(bm);
