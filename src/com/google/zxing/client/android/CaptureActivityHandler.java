@@ -76,7 +76,7 @@ public final class CaptureActivityHandler extends Handler {
     this.cameraManager = cameraManager;
     
     //dxchange: already started preview in CaptureActivity
-//    cameraManager.startPreview();
+    cameraManager.startPreview();
     
     restartPreviewAndDecode();
   }
@@ -141,7 +141,7 @@ public final class CaptureActivityHandler extends Handler {
     state = State.DONE;
     
     //dxchange: preview will be stopped in CaptureActivity's onPause
-//    cameraManager.stopPreview();
+    cameraManager.stopPreview();
     
     Message quit = Message.obtain(decodeThread.getHandler(), R.id.quit);
     quit.sendToTarget();
