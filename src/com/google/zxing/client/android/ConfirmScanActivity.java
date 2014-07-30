@@ -27,7 +27,7 @@ public class ConfirmScanActivity extends Activity {
 			public void onClick(View v) {
 				setResult(Activity.RESULT_CANCELED);
 				finish();
-			}
+			} 
 		});
 		
 		LinearLayout btnLOConfirm = (LinearLayout) findViewById(R.id.btn_lo_confirm);
