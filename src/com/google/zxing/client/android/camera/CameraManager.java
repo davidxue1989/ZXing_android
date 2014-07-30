@@ -16,10 +16,7 @@
 
 package com.google.zxing.client.android.camera;
 
-import java.io.IOException;
-
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -27,13 +24,57 @@ import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import android.widget.RelativeLayout;
 
 import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.client.android.CaptureActivity;
 import com.google.zxing.client.android.camera.C2SCameraPreview.PreviewReadyCallback;
 
 public final class CameraManager implements PreviewReadyCallback {
+	
+	
+//	// dxdelete
+	public void setTorch(boolean b) {
+		// TODO Auto-generated method stub
+
+	}
+//	public Rect getFramingRect() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	public void startPreview() {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	public CameraManager(Context context) {
+//		// TODO Auto-generated constructor stub
+//	}
+//
+//	public void openDriver(SurfaceHolder surfaceHolder) throws IOException {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	public void closeDriver() {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	public void setManualFramingRect(int width, int height) {
+//		// TODO Auto-generated method stub
+//
+//	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
   private static final String TAG = CameraManager.class.getSimpleName();
 
@@ -54,9 +95,10 @@ public final class CameraManager implements PreviewReadyCallback {
 //  private AutoFocusManager autoFocusManager;
   private Rect framingRect;
   private Rect framingRectInPreview;
-  private int requestedFramingRectWidth;
-  private int requestedFramingRectHeight;
+  private final static double cropPreviewFactor = 0.7;
   
+
+  private AutoFocusManager autoFocusManager;
   
 
   public CameraManager(Activity activity) {
@@ -64,16 +106,6 @@ public final class CameraManager implements PreviewReadyCallback {
 //    this.configManager = new CameraConfigurationManager(context);
     previewCallback = new PreviewCallback(mPreview);
   }
-
-
-
-
-public CameraManager(Context context) {
-	// TODO Auto-generated constructor stub
-}
-
-
-
 
 public synchronized boolean isOpen() {
     return camera != null;
@@ -105,6 +137,7 @@ public synchronized boolean isOpen() {
 		else
 			previewCallback.cameraResolution = new Point(sz.width, sz.height);
 		
+		((CaptureActivity) activity).startHandler();
 	}
 
 
@@ -115,34 +148,23 @@ public synchronized boolean isOpen() {
       setupCamera();
       mPreview = new C2SCameraPreview(activity, camera, C2SCameraPreview.LayoutMode.FitToParent, layout, this);
       //previewing will be set to true in onPreviewReady callback
-	  
-	  
-//    Camera theCamera = camera;
-//    if (theCamera != null && !previewing) {
-//      theCamera.startPreview();
-//      previewing = true;
-//      autoFocusManager = new AutoFocusManager(activity, camera);
-//    }
+
+      autoFocusManager = new AutoFocusManager(activity, camera);
   }
 
   /**
    * Tells the camera to stop drawing preview frames.
    */
   public synchronized void stopPreview() {
+	  if (autoFocusManager != null) {
+	      autoFocusManager.stop();
+	      autoFocusManager = null;
+	  }
+	  
 	  mPreview.stop();
       mPreview = null;
+      previewCallback.setHandler(null, 0);
 	  previewing = false;
-	  
-	  
-//    if (autoFocusManager != null) {
-//      autoFocusManager.stop();
-//      autoFocusManager = null;
-//    }
-//    if (camera != null && previewing) {
-//      camera.stopPreview();
-//      previewCallback.setHandler(null, 0);
-//      previewing = false;
-//    }
   }
 
 
@@ -153,7 +175,7 @@ public synchronized boolean isOpen() {
 // * @param holder The surface object which the camera will draw preview frames into.
 // * @throws IOException Indicates the camera driver failed to open.
 // */
-public synchronized void openDriver(SurfaceHolder holder) throws IOException {	  
+//public synchronized void openDriver(SurfaceHolder holder) throws IOException {	  
 //  Camera theCamera = camera;
 //  if (theCamera == null) {
 //    theCamera = OpenCameraInterface.open();
@@ -195,12 +217,12 @@ public synchronized void openDriver(SurfaceHolder holder) throws IOException {
 //      }
 //    }
 //  }
-}
+//}
 
 ///**
 //* Closes the camera driver if still in use.
 //*/
-public synchronized void closeDriver() {
+//public synchronized void closeDriver() {
 //	  
 //if (camera != null) {
 //  camera.release();
@@ -210,7 +232,7 @@ public synchronized void closeDriver() {
 //  framingRect = null;
 //  framingRectInPreview = null;
 //}
-}
+//}
 
   /**
    * A single preview frame will be returned to the handler supplied. The data will arrive as byte[]
@@ -228,19 +250,15 @@ public synchronized void closeDriver() {
     }
   }
 
-  /**
-   * Calculates the framing rect which the UI should draw to show the user where to place the
-   * barcode. This target helps with alignment as well as forces the user to hold the device
-   * far enough away to ensure the image will be in focus.
-   *
-   * @return The rectangle to draw on screen in window coordinates.
-   */
-  public synchronized Rect getFramingRect() {
-	  //dxtodo
-	  
-	  
-	  
-	  
+//  /**
+//   * Calculates the framing rect which the UI should draw to show the user where to place the
+//   * barcode. This target helps with alignment as well as forces the user to hold the device
+//   * far enough away to ensure the image will be in focus.
+//   *
+//   * @return The rectangle to draw on screen in window coordinates.
+//   */
+//  public synchronized Rect getFramingRect() {
+//	  
 //    if (framingRect == null) {
 //      if (camera == null) {
 //        return null;
@@ -259,8 +277,8 @@ public synchronized void closeDriver() {
 //      framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
 //      Log.d(TAG, "Calculated framing rect: " + framingRect);
 //    }
-    return framingRect;
-  }
+//    return framingRect;
+//  }
   
 //  private static int findDesiredDimensionInRange(int resolution, int hardMin, int hardMax) {
 //    int dim = 5 * resolution / 8; // Target 5/8 of each dimension
@@ -278,56 +296,16 @@ public synchronized void closeDriver() {
    * not UI / screen.
    */
   public synchronized Rect getFramingRectInPreview() {
-	  //dxtodo
-	  
-//    if (framingRectInPreview == null) {
-//      Rect framingRect = getFramingRect();
-//      if (framingRect == null) {
-//        return null;
-//      }
-//      Rect rect = new Rect(framingRect);
-//      Point cameraResolution = configManager.getCameraResolution();
-//      Point screenResolution = configManager.getScreenResolution();
-//      if (cameraResolution == null || screenResolution == null) {
-//        // Called early, before init even finished
-//        return null;
-//      }
-//      rect.left = rect.left * cameraResolution.x / screenResolution.x;
-//      rect.right = rect.right * cameraResolution.x / screenResolution.x;
-//      rect.top = rect.top * cameraResolution.y / screenResolution.y;
-//      rect.bottom = rect.bottom * cameraResolution.y / screenResolution.y;
-//      framingRectInPreview = rect;
-//    }
+	Size sz = mPreview.getPreviewSize();
+    framingRect = new Rect((int) (sz.width*(1-cropPreviewFactor)*0.5), 
+    					   (int) (sz.height*(1-cropPreviewFactor)*0.5), 
+    					   (int) (sz.width*(1-cropPreviewFactor*0.5)), 
+    					   (int) (sz.height*(1-cropPreviewFactor*0.5)));
+    Log.d(TAG, "Calculated framing rect: " + framingRect); 
     return framingRectInPreview;
   }
-
-//  /**
-//   * Allows third party apps to specify the scanning rectangle dimensions, rather than determine
-//   * them automatically based on screen resolution.
-//   *
-//   * @param width The width in pixels to scan.
-//   * @param height The height in pixels to scan.
-//   */
-  public synchronized void setManualFramingRect(int width, int height) {
-//    if (initialized) {
-//      Point screenResolution = configManager.getScreenResolution();
-//      if (width > screenResolution.x) {
-//        width = screenResolution.x;
-//      }
-//      if (height > screenResolution.y) {
-//        height = screenResolution.y;
-//      }
-//      int leftOffset = (screenResolution.x - width) / 2;
-//      int topOffset = (screenResolution.y - height) / 2;
-//      framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
-//      Log.d(TAG, "Calculated manual framing rect: " + framingRect);
-//      framingRectInPreview = null;
-//    } else {
-//      requestedFramingRectWidth = width;
-//      requestedFramingRectHeight = height;
-//    }
-  }
-
+  
+  
   /**
    * A factory method to build the appropriate LuminanceSource object based on the format
    * of the preview buffers, as described by Camera.Parameters.
@@ -346,21 +324,5 @@ public synchronized void closeDriver() {
     return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
                                         rect.width(), rect.height(), false);
   }
-
-
-
-
-public void setTorch(boolean b) {
-	// TODO Auto-generated method stub
-	
-}
-
-
-
-
-public void startPreview() {
-	// TODO Auto-generated method stub
-	
-}
 
 }

@@ -75,8 +75,8 @@ public final class CaptureActivityHandler extends Handler {
     // Start ourselves capturing previews and decoding.
     this.cameraManager = cameraManager;
     
-    //dxchange: will start preview in CaptureActivity when surfaceView.setPreviewSize is called
-    cameraManager.startPreview();
+    //dxchange: already started preview in CaptureActivity
+//    cameraManager.startPreview();
     
     restartPreviewAndDecode();
   }
@@ -139,7 +139,10 @@ public final class CaptureActivityHandler extends Handler {
 
   public void quitSynchronously() {
     state = State.DONE;
-    cameraManager.stopPreview();
+    
+    //dxchange: preview will be stopped in CaptureActivity's onPause
+//    cameraManager.stopPreview();
+    
     Message quit = Message.obtain(decodeThread.getHandler(), R.id.quit);
     quit.sendToTarget();
     try {
@@ -158,7 +161,7 @@ public final class CaptureActivityHandler extends Handler {
     if (state == State.SUCCESS) {
       state = State.PREVIEW;
       cameraManager.requestPreviewFrame(decodeThread.getHandler(), R.id.decode);
-      activity.drawViewfinder();
+//      activity.drawViewfinder();
     }
   }
 

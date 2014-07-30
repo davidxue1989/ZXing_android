@@ -1,14 +1,17 @@
 package com.google.zxing.client.android.camera;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
@@ -17,6 +20,8 @@ import android.view.SurfaceView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
+
+import com.google.zxing.client.android.PreferencesActivity;
 
 public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private static boolean DEBUGGING = true;
@@ -331,6 +336,34 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
             Log.v(LOG_TAG, "Preview Actual Size - w: " + mPreviewSize.width + ", h: " + mPreviewSize.height);
             Log.v(LOG_TAG, "Picture Actual Size - w: " + mPictureSize.width + ", h: " + mPictureSize.height);
         }
+        
+        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+
+        //dxnote: i just copied from CameraConfigurationManager.  focusMode is probably set to FOCUS_MODE_AUTO
+        String focusMode = null;
+        if (prefs.getBoolean(PreferencesActivity.KEY_AUTO_FOCUS, true)) {
+          if (prefs.getBoolean(PreferencesActivity.KEY_DISABLE_CONTINUOUS_FOCUS, false)) {
+            focusMode = findSettableValue(cameraParams.getSupportedFocusModes(),
+                                          Camera.Parameters.FOCUS_MODE_AUTO);
+          } else {
+            focusMode = findSettableValue(cameraParams.getSupportedFocusModes(),
+                                          Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE,
+                                          Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO,
+                                          Camera.Parameters.FOCUS_MODE_AUTO);
+          }
+        }
+        // Maybe selected auto-focus but not available, so fall through here:
+        if (focusMode == null) {
+          focusMode = findSettableValue(cameraParams.getSupportedFocusModes(),
+                                        Camera.Parameters.FOCUS_MODE_MACRO,
+                                        Camera.Parameters.FOCUS_MODE_EDOF);
+        }
+        if (focusMode != null) {
+        	cameraParams.setFocusMode(focusMode);
+        }
+
+        
 
         mCamera.setParameters(cameraParams);
         
@@ -338,6 +371,23 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
         cameraParams = mCamera.getParameters();
         Size sz = cameraParams.getPreviewSize();
         int a = 0; //dxbreak
+    }
+
+
+    private static String findSettableValue(Collection<String> supportedValues,
+                                            String... desiredValues) {
+      Log.i(LOG_TAG, "Supported values: " + supportedValues);
+      String result = null;
+      if (supportedValues != null) {
+        for (String desiredValue : desiredValues) {
+          if (supportedValues.contains(desiredValue)) {
+            result = desiredValue;
+            break;
+          }
+        }
+      }
+      Log.i(LOG_TAG, "Settable value: " + result);
+      return result;
     }
 
     

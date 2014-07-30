@@ -1,20 +1,20 @@
-/*
- * Copyright (C) 2008 ZXing authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.google.zxing.client.android;
+///*
+// * Copyright (C) 2008 ZXing authors
+// *
+// * Licensed under the Apache License, Version 2.0 (the "License");
+// * you may not use this file except in compliance with the License.
+// * You may obtain a copy of the License at
+// *
+// *      http://www.apache.org/licenses/LICENSE-2.0
+// *
+// * Unless required by applicable law or agreed to in writing, software
+// * distributed under the License is distributed on an "AS IS" BASIS,
+// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// * See the License for the specific language governing permissions and
+// * limitations under the License.
+// */
+//
+//package com.google.zxing.client.android;
 //
 //import java.io.IOException;
 //import java.text.DateFormat;
@@ -76,7 +76,7 @@ package com.google.zxing.client.android;
 // */
 //public class CaptureActivity extends Activity implements SurfaceHolder.Callback {
 //
-//  private static final String TAG = CaptureActivity_original.class.getSimpleName();
+//  private static final String TAG = CaptureActivity.class.getSimpleName();
 //
 //  private static final long DEFAULT_INTENT_RESULT_DURATION_MS = 1500L;
 //  private static final long BULK_MODE_SCAN_DELAY_MS = 1000L;
@@ -150,7 +150,8 @@ package com.google.zxing.client.android;
 //
 //    Window window = getWindow();
 //    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//    setContentView(R.layout.capture);
+////    setContentView(R.layout.capture);
+//    setContentView(R.layout.capture_original);
 //
 //    hasSurface = false;
 //    historyManager = new HistoryManager(this);
@@ -316,7 +317,7 @@ package com.google.zxing.client.android;
 //        if ((source == IntentSource.NONE || source == IntentSource.ZXING_LINK) && lastResult != null) {
 //        	//dxchanged
 ////          restartPreviewAfterDelay(0L);
-//          Intent intent = new Intent(this, CaptureActivity_original.class);
+//          Intent intent = new Intent(this, CaptureActivity.class);
 //          setResult(Activity.RESULT_CANCELED, intent);
 //		  finish(); //return to the activity that called Capture
 //          return true;
