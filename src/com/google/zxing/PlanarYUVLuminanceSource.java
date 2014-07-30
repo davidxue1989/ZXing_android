@@ -43,7 +43,8 @@ public final class PlanarYUVLuminanceSource extends LuminanceSource {
                                   int top,
                                   int width,
                                   int height,
-                                  boolean reverseHorizontal) {
+                                  boolean reverseHorizontal,
+                                  boolean rotate90) {
     super(width, height);
 
     if (left + width > dataWidth || top + height > dataHeight) {
@@ -58,6 +59,13 @@ public final class PlanarYUVLuminanceSource extends LuminanceSource {
     if (reverseHorizontal) {
       reverseHorizontal(width, height);
     }
+    if (rotate90) {
+    	rotate90(width, height);
+    }
+  }
+  
+  private void rotate90 (int width, int height) {
+	  //dxtodo
   }
 
   @Override
@@ -119,6 +127,7 @@ public final class PlanarYUVLuminanceSource extends LuminanceSource {
                                         this.top + top,
                                         width,
                                         height,
+                                        false,
                                         false);
   }
 

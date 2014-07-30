@@ -16,10 +16,18 @@
 
 package com.google.zxing.client.android.camera;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Activity;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.Handler;
@@ -30,7 +38,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.client.android.CaptureActivity;
 import com.google.zxing.client.android.camera.C2SCameraPreview.PreviewReadyCallback;
 
-public final class CameraManager implements PreviewReadyCallback {
+public final class CameraManager implements PreviewReadyCallback, Camera.AutoFocusCallback {
 	
 	
 //	// dxdelete
@@ -41,10 +49,14 @@ public final class CameraManager implements PreviewReadyCallback {
 	
 	
   private static final String TAG = CameraManager.class.getSimpleName();
-
-  private Activity activity;
+  
+  private static final boolean portraitMode = true;
+  
+  private CaptureActivity activity;
   public Camera camera;
   private int mCameraId;
+  private Handler takePhotoHandle;
+  private boolean startedPictureProcess = false;
 
   /**
    * Preview frames are delivered here, which we pass on to the registered handler. Make sure to
@@ -58,9 +70,10 @@ public final class CameraManager implements PreviewReadyCallback {
     private AutoFocusManager autoFocusManager;
   
 
-  public CameraManager(Activity activity) {
+  public CameraManager(CaptureActivity activity) {
     this.activity = activity;
     previewCallback = new PreviewCallback(activity);
+    takePhotoHandle = new Handler();
   }
 
 public synchronized boolean isOpen() {
@@ -85,13 +98,13 @@ public synchronized boolean isOpen() {
   
 	@Override
 	public void onPreviewReady() {
-		previewing = true;
-		
-		if (autoFocusManager != null) {
-			autoFocusManager.start();
+		previewing = true;		
+		if (!activity.isCCC) {
+			if (autoFocusManager != null) {
+				autoFocusManager.start();
+			}
+			activity.startHandler();
 		}
-		
-		((CaptureActivity) activity).startHandler();
 	}
 
 
@@ -100,9 +113,7 @@ public synchronized boolean isOpen() {
 	 */
   public synchronized void startPreview(RelativeLayout layout) {
       setupCamera();
-      mPreview = new C2SCameraPreview(activity, camera, C2SCameraPreview.LayoutMode.FitToParent, layout, this);
-      //previewing will be set to true in onPreviewReady callback
-
+      mPreview = new C2SCameraPreview(activity, camera, C2SCameraPreview.LayoutMode.FitToParent, layout, this);//previewing will be set to true in onPreviewReady callback
       autoFocusManager = new AutoFocusManager(activity, camera);
   }
 
@@ -121,73 +132,6 @@ public synchronized boolean isOpen() {
 	  previewing = false;
   }
 
-
-  
-///**
-// * Opens the camera driver and initializes the hardware parameters.
-// *
-// * @param holder The surface object which the camera will draw preview frames into.
-// * @throws IOException Indicates the camera driver failed to open.
-// */
-//public synchronized void openDriver(SurfaceHolder holder) throws IOException {	  
-//  Camera theCamera = camera;
-//  if (theCamera == null) {
-//    theCamera = OpenCameraInterface.open();
-//    if (theCamera == null) {
-//      throw new IOException();
-//    }
-//    camera = theCamera;
-//  }
-//  theCamera.setPreviewDisplay(holder);
-//
-//  if (!initialized) {
-//    initialized = true;
-//    configManager.initFromCameraParameters(theCamera);
-//    if (requestedFramingRectWidth > 0 && requestedFramingRectHeight > 0) {
-//      setManualFramingRect(requestedFramingRectWidth, requestedFramingRectHeight);
-//      requestedFramingRectWidth = 0;
-//      requestedFramingRectHeight = 0;
-//    }
-//  }
-//
-//  Camera.Parameters parameters = theCamera.getParameters();
-//  String parametersFlattened = parameters == null ? null : parameters.flatten(); // Save these, temporarily
-//  try {
-//    configManager.setDesiredCameraParameters(theCamera, false);
-//  } catch (RuntimeException re) {
-//    // Driver failed
-//    Log.w(TAG, "Camera rejected parameters. Setting only minimal safe-mode parameters");
-//    Log.i(TAG, "Resetting to saved camera params: " + parametersFlattened);
-//    // Reset:
-//    if (parametersFlattened != null) {
-//      parameters = theCamera.getParameters();
-//      parameters.unflatten(parametersFlattened);        
-//      try {
-//        theCamera.setParameters(parameters);
-//        configManager.setDesiredCameraParameters(theCamera, true);
-//      } catch (RuntimeException re2) {
-//        // Well, darn. Give up
-//        Log.w(TAG, "Camera rejected even safe-mode parameters! No configuration");
-//      }
-//    }
-//  }
-//}
-
-///**
-//* Closes the camera driver if still in use.
-//*/
-//public synchronized void closeDriver() {
-//	  
-//if (camera != null) {
-//  camera.release();
-//  camera = null;
-//  // Make sure to clear these each time we close the camera, so that any scanning rect
-//  // requested by intent is forgotten.
-//  framingRect = null;
-//  framingRectInPreview = null;
-//}
-//}
-
   /**
    * A single preview frame will be returned to the handler supplied. The data will arrive as byte[]
    * in the message.obj field, with width and height encoded as message.arg1 and message.arg2,
@@ -203,48 +147,7 @@ public synchronized boolean isOpen() {
       theCamera.setOneShotPreviewCallback(previewCallback);
     }
   }
-
-//  /**
-//   * Calculates the framing rect which the UI should draw to show the user where to place the
-//   * barcode. This target helps with alignment as well as forces the user to hold the device
-//   * far enough away to ensure the image will be in focus.
-//   *
-//   * @return The rectangle to draw on screen in window coordinates.
-//   */
-//  public synchronized Rect getFramingRect() {
-//	  
-//    if (framingRect == null) {
-//      if (camera == null) {
-//        return null;
-//      }
-//      Point screenResolution = configManager.getScreenResolution();
-//      if (screenResolution == null) {
-//        // Called early, before init even finished
-//        return null;
-//      }
-//
-//      int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
-//      int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
-//
-//      int leftOffset = (screenResolution.x - width) / 2;
-//      int topOffset = (screenResolution.y - height) / 2;
-//      framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
-//      Log.d(TAG, "Calculated framing rect: " + framingRect);
-//    }
-//    return framingRect;
-//  }
   
-//  private static int findDesiredDimensionInRange(int resolution, int hardMin, int hardMax) {
-//    int dim = 5 * resolution / 8; // Target 5/8 of each dimension
-//    if (dim < hardMin) {
-//      return hardMin;
-//    }
-//    if (dim > hardMax) {
-//      return hardMax;
-//    }
-//    return dim;
-//  }
-
   /**
    * Like {@link #getFramingRect} but coordinates are in terms of the preview frame,
    * not UI / screen.
@@ -276,7 +179,52 @@ public synchronized boolean isOpen() {
     }
     // Go ahead and assume it's YUV rather than die.
     return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
-                                        rect.width(), rect.height(), false);
+                                        rect.width(), rect.height(), false, portraitMode);
   }
 
+	public void takePhoto() {
+		if (!startedPictureProcess) {
+			autoFocusManager.start(this);
+			startedPictureProcess = true;
+		}
+	}
+	@Override
+	public void onAutoFocus(boolean success, Camera camera) {
+		takePhotoHandle.post(takePhoto);
+	}
+	private Runnable takePhoto = new Runnable() {
+		@Override
+		public void run() {
+			camera.takePicture(shutterCallback, null, pictureCallback);
+			Log.v("take", "about to take");
+		}
+	};
+	// code to execute after picture has been taken but 'before' its finished being processed
+	Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
+		public void onShutter() {
+			// dont need to add anything here, just by making it, it will add
+			// the defualt shutter handler which is a "clicking noise" when a
+			// picture is taken
+		}
+	};
+	private PictureCallback pictureCallback = new PictureCallback() {
+	    @Override
+	    public void onPictureTaken(byte[] data, Camera camera) {
+	        File pictureFile = new File(CaptureActivity.path);
+	        try {
+	            FileOutputStream fos = new FileOutputStream(pictureFile);
+	            fos.write(data);
+	            fos.close();
+	        } catch (FileNotFoundException e) {
+	        } catch (IOException e) {
+	        }
+	        
+//			camera.startPreview();
+			System.gc();
+			Log.v("got photo", "got photo");
+			
+			startedPictureProcess = false;
+			activity.onCCCPhoto();
+	    }
+	};
 }

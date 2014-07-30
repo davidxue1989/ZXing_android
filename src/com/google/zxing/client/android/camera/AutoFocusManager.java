@@ -64,7 +64,7 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
     }
   }
 
-  synchronized void start() {
+  synchronized void start() { //continuously auto focusing for video stream
     if (useAutoFocus) {
       active = true;
       try {
@@ -75,6 +75,16 @@ final class AutoFocusManager implements Camera.AutoFocusCallback {
       }
     }
   }
+  
+
+	synchronized void start(Camera.AutoFocusCallback cb) { //single auto focus for photo shot
+		try {
+			camera.autoFocus(cb);
+		} catch (RuntimeException re) {
+			// Have heard RuntimeException reported in Android 4.0.x+; continue?
+			Log.w(TAG, "Unexpected exception while focusing", re);
+		}
+	}
 
   synchronized void stop() {
     if (useAutoFocus) {

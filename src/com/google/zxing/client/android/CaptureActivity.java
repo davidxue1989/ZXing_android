@@ -20,6 +20,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -27,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -36,12 +39,12 @@ import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.android.result.ResultHandlerFactory;
 
 public class CaptureActivity extends Activity {
-	boolean isCCC = false;
-	String path = "";
+	public boolean isCCC = false;
+	public static String path = "";
+	public static final int CONFIRM_REQCODE = 123;
 	
 	private CameraManager cameraManager;
 	  private CaptureActivityHandler handler;
-	  private Result lastResult;
 	  
     private RelativeLayout mLayout;
     
@@ -86,7 +89,7 @@ public class CaptureActivity extends Activity {
 		btnLOScan.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
-				
+				cameraManager.takePhoto(); // will call back to onCCCPhoto
 			}
 		});
 		
@@ -125,14 +128,14 @@ public class CaptureActivity extends Activity {
 
     @Override
     protected void onPause() {
-        super.onPause();
-
-        if (handler != null) {
+        if (handler != null && !isCCC) {
           handler.quitSynchronously();
           handler = null;
         }        
         
         cameraManager.stopPreview();
+        
+        super.onPause();
     }
     
 	public void restartPreviewAfterDelay(long delayMS) {
@@ -150,20 +153,16 @@ public class CaptureActivity extends Activity {
 	   * @param barcode   A greyscale bitmap of the camera data which was decoded.
 	   */
 	  public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
-	    lastResult = rawResult;
 	    ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(this, rawResult);
 	    handleDecodeInternally(rawResult, resultHandler, barcode);
 	  }
 
 	// Put up our own UI for how to handle the decoded contents.
-	private void handleDecodeInternally(Result rawResult, ResultHandler resultHandler, Bitmap barcode) {
-		
+	private void handleDecodeInternally(Result rawResult, ResultHandler resultHandler, Bitmap barcode) {		
 //		String BarcodeFormat = rawResult.getBarcodeFormat().toString();
-//		String type = resultHandler.getType().toString();
-//		
+//		String type = resultHandler.getType().toString();//		
 //		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-//		String date = formatter.format(new Date(rawResult.getTimestamp()));
-		  
+//		String date = formatter.format(new Date(rawResult.getTimestamp()));		  
 		//barcodeImageView.setImageBitmap(barcode);
 
 		CharSequence text = resultHandler.getDisplayContents();
@@ -173,10 +172,51 @@ public class CaptureActivity extends Activity {
 		finish(); //return to the activity that called CaptureActivity
 	}
 
-	  public void startHandler() {
+	  public void startHandler() { 
+		//called by CameraManager's onPreviewReady which is called back from C2SCameraPreview after surface view is created
 	    if (handler == null) {
 	      handler = new CaptureActivityHandler(this, null, null, null, cameraManager);
 	    }
 	  }
 
+	public void onCCCPhoto() {
+//		Bitmap bm = getCCCPhoto(this);		
+//		ImageView iv = (ImageView) findViewById(R.id.debug_image_view);
+//		iv.setImageBitmap(bm);
+		
+		Intent confirmIntent = new Intent(getApplicationContext(), ConfirmScanActivity.class);
+		startActivityForResult(confirmIntent, CONFIRM_REQCODE);
+	}
+	
+	public static Bitmap getCCCPhoto(Activity activity, float rotation) {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+		Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+		final float densityMultiplier = activity.getBaseContext().getResources().getDisplayMetrics().density;
+		int h = (int) (512 * densityMultiplier);
+		int w = (int) (h * bitmap.getWidth() / ((double) bitmap.getHeight()));
+		Bitmap bitmapScaled = Bitmap.createScaledBitmap(bitmap, w, h, true);
+		bitmap.recycle();
+		bitmap = null;
+		// createa matrix for the manipulation
+		Matrix matrix = new Matrix();
+		// resize the bit map
+		matrix.postScale(1, 1);
+		// rotate the Bitmap
+		matrix.postRotate(90);
+		// recreate the new Bitmap
+		Bitmap resizedBitmap = Bitmap.createBitmap(bitmapScaled, 0, 0, w, h, matrix, true);
+		return resizedBitmap;
+	}
+	
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{
+		if (resultCode == RESULT_OK && requestCode == CONFIRM_REQCODE) 
+		{
+			setResult(Activity.RESULT_OK);
+			finish();
+		}
+	}
 }
