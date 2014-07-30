@@ -114,10 +114,10 @@ public synchronized boolean isOpen() {
 	      autoFocusManager.stop();
 	      autoFocusManager = null;
 	  }
-	  
+
+      previewCallback.setHandler(null, 0);
 	  mPreview.stop();
       mPreview = null;
-      previewCallback.setHandler(null, 0);
 	  previewing = false;
   }
 

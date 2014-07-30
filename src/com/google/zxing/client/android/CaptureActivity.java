@@ -16,17 +16,18 @@
 
 package com.google.zxing.client.android;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.google.zxing.Result;
@@ -35,12 +36,13 @@ import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.android.result.ResultHandlerFactory;
 
 public class CaptureActivity extends Activity {
+	boolean isCCC = false;
+	String path = "";
+	
 	private CameraManager cameraManager;
 	  private CaptureActivityHandler handler;
-	
-
 	  private Result lastResult;
-	
+	  
     private RelativeLayout mLayout;
     
 
@@ -60,9 +62,46 @@ public class CaptureActivity extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.capture);
 		
-		mLayout = (RelativeLayout) findViewById(R.id.preview_frame);
-        
+	    //get intent extras
+		Intent intent = getIntent();
+		Bundle b = null;
+		if (intent != null)
+			b = intent.getExtras();
+		if (b != null) {
+			isCCC = b.getBoolean("isCCC");
+			if (isCCC) {
+				path = b.getString("path");
+				if (path == null) {
+					path = "";
+					assert(false);
+				}
+			}
+		}
 
+		LinearLayout btnLOScan = (LinearLayout) findViewById(R.id.btn_lo_scan);
+		if (!isCCC) {
+			//disable scan button
+			btnLOScan.setVisibility(View.INVISIBLE);
+		}
+		btnLOScan.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				
+			}
+		});
+		
+		LinearLayout btnLOBack = (LinearLayout) findViewById(R.id.btn_lo_back);
+		btnLOBack.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setResult(Activity.RESULT_CANCELED);
+				finish();
+			}
+		});
+
+		mLayout = (RelativeLayout) findViewById(R.id.preview_frame);
+		
+		
 	    //dxchanged
 	    PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 	    SharedPreferences.Editor prefsEdit = PreferenceManager.getDefaultSharedPreferences(this).edit();
@@ -70,8 +109,7 @@ public class CaptureActivity extends Activity {
 	    prefsEdit.putBoolean(PreferencesActivity.KEY_DECODE_DATA_MATRIX, false);
 	    prefsEdit.putBoolean(PreferencesActivity.KEY_DECODE_QR, true); 
 	    prefsEdit.commit();
-	}
-	
+	}	
 	
 
     @Override
@@ -92,13 +130,11 @@ public class CaptureActivity extends Activity {
         if (handler != null) {
           handler.quitSynchronously();
           handler = null;
-        }
-        
+        }        
         
         cameraManager.stopPreview();
-
-        
     }
+    
 	public void restartPreviewAfterDelay(long delayMS) {
 		if (handler != null) {
 		  handler.sendEmptyMessageDelayed(R.id.restart_preview, delayMS);
@@ -122,49 +158,19 @@ public class CaptureActivity extends Activity {
 	// Put up our own UI for how to handle the decoded contents.
 	private void handleDecodeInternally(Result rawResult, ResultHandler resultHandler, Bitmap barcode) {
 		
-		String BarcodeFormat = rawResult.getBarcodeFormat().toString();
-		String type = resultHandler.getType().toString();
-		
-		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-		String date = formatter.format(new Date(rawResult.getTimestamp()));
+//		String BarcodeFormat = rawResult.getBarcodeFormat().toString();
+//		String type = resultHandler.getType().toString();
+//		
+//		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+//		String date = formatter.format(new Date(rawResult.getTimestamp()));
+		  
+		//barcodeImageView.setImageBitmap(barcode);
 
-		CharSequence displayContents = resultHandler.getDisplayContents();
-		
-		int a = 0;
-		a++;
-		
-		
-	  //barcodeImageView.setImageBitmap(barcode);
-		
-	//formatTextView.setText(rawResult.getBarcodeFormat().toString());
-		
-	//typeTextView.setText(resultHandler.getType().toString());
-		
-	//DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-	//timeTextView.setText(formatter.format(new Date(rawResult.getTimestamp())));
-	
-	
-	//Map<ResultMetadataType,Object> metadata = rawResult.getResultMetadata();
-	//if (metadata != null) {
-	//  StringBuilder metadataText = new StringBuilder(20);
-	//  for (Map.Entry<ResultMetadataType,Object> entry : metadata.entrySet()) {
-	//    if (DISPLAYABLE_METADATA_TYPES.contains(entry.getKey())) {
-	//      metadataText.append(entry.getValue()).append('\n');
-	//    }
-	//  }
-	//  if (metadataText.length() > 0) {
-	//    metadataText.setLength(metadataText.length() - 1);
-	//    metaTextView.setText(metadataText);
-	//    metaTextView.setVisibility(View.VISIBLE);
-	//    metaTextViewLabel.setVisibility(View.VISIBLE);
-	//  }
-	//}
-	
-	//CharSequence displayContents = resultHandler.getDisplayContents();
-	//contentsTextView.setText(displayContents);
-		
-	
-	
+		CharSequence text = resultHandler.getDisplayContents();
+	    Intent intent = new Intent();
+	    intent.putExtra(ResultHandler.RESULT, text);
+		setResult(Activity.RESULT_OK, intent);
+		finish(); //return to the activity that called CaptureActivity
 	}
 
 	  public void startHandler() {
