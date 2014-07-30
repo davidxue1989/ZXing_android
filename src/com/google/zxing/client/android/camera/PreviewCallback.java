@@ -16,7 +16,7 @@
 
 package com.google.zxing.client.android.camera;
 
-import android.graphics.Point;
+import android.app.Activity;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Handler;
@@ -25,20 +25,16 @@ import android.util.Log;
 
 final class PreviewCallback implements Camera.PreviewCallback {
 
+	public Activity activity;
+	
+	
 	private static final String TAG = PreviewCallback.class.getSimpleName();
 
-	// dxchange
-	// private final CameraConfigurationManager configManager;
-	private final C2SCameraPreview cameraPreview;
-	public Point cameraResolution = null;
 	private Handler previewHandler;
 	private int previewMessage;
 
-	// PreviewCallback(CameraConfigurationManager configManager) {
-	// this.configManager = configManager;
-	// }
-	PreviewCallback(C2SCameraPreview cameraPreview) {
-		this.cameraPreview = cameraPreview;
+	PreviewCallback(Activity activity) {
+		this.activity = activity;
 	}
 
 	void setHandler(Handler previewHandler, int previewMessage) {
@@ -48,15 +44,14 @@ final class PreviewCallback implements Camera.PreviewCallback {
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
-		// dxchange
-		// Point cameraResolution = configManager.getCameraResolution();
+		Size previewSize = camera.getParameters().getPreviewSize(); 
 		Handler thePreviewHandler = previewHandler;
-		if (cameraResolution != null && thePreviewHandler != null) {
-			Message message = thePreviewHandler.obtainMessage(previewMessage, cameraResolution.x, cameraResolution.y, data);
+		if (previewSize != null && thePreviewHandler != null) {
+			Message message = thePreviewHandler.obtainMessage(previewMessage, previewSize.width, previewSize.height, data);
 			message.sendToTarget();
 			previewHandler = null;
 		} else {
-			Log.d(TAG, "Got preview callback, but no cameraResolution or thePreviewHandler available");
+			Log.d(TAG, "Got preview callback, but no previewSize or thePreviewHandler available");
 		}
 	}
 

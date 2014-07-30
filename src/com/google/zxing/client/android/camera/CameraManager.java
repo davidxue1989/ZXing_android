@@ -38,48 +38,11 @@ public final class CameraManager implements PreviewReadyCallback {
 		// TODO Auto-generated method stub
 
 	}
-//	public Rect getFramingRect() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	public void startPreview() {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	public CameraManager(Context context) {
-//		// TODO Auto-generated constructor stub
-//	}
-//
-//	public void openDriver(SurfaceHolder surfaceHolder) throws IOException {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	public void closeDriver() {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	public void setManualFramingRect(int width, int height) {
-//		// TODO Auto-generated method stub
-//
-//	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-
   private static final String TAG = CameraManager.class.getSimpleName();
 
   private Activity activity;
-//  private final CameraConfigurationManager configManager;
   public Camera camera;
   private int mCameraId;
 
@@ -90,21 +53,14 @@ public final class CameraManager implements PreviewReadyCallback {
   private PreviewCallback previewCallback = null;
 	private C2SCameraPreview mPreview;
     private boolean previewing = false;
-  
-  
-//  private AutoFocusManager autoFocusManager;
-  private Rect framingRect;
-  private Rect framingRectInPreview;
-  private final static double cropPreviewFactor = 0.7;
-  
-
-  private AutoFocusManager autoFocusManager;
+    private Rect framingRectInPreview;
+    private final static double cropPreviewFactor = 0.6;
+    private AutoFocusManager autoFocusManager;
   
 
   public CameraManager(Activity activity) {
     this.activity = activity;
-//    this.configManager = new CameraConfigurationManager(context);
-    previewCallback = new PreviewCallback(mPreview);
+    previewCallback = new PreviewCallback(activity);
   }
 
 public synchronized boolean isOpen() {
@@ -130,12 +86,10 @@ public synchronized boolean isOpen() {
 	@Override
 	public void onPreviewReady() {
 		previewing = true;
-
-		Size sz = mPreview.getPreviewSize();
-		if (sz == null)
-			Log.d(TAG, "in onPreviewReady(), getPreviewSize() is null!");
-		else
-			previewCallback.cameraResolution = new Point(sz.width, sz.height);
+		
+		if (autoFocusManager != null) {
+			autoFocusManager.start();
+		}
 		
 		((CaptureActivity) activity).startHandler();
 	}
@@ -297,11 +251,11 @@ public synchronized boolean isOpen() {
    */
   public synchronized Rect getFramingRectInPreview() {
 	Size sz = mPreview.getPreviewSize();
-    framingRect = new Rect((int) (sz.width*(1-cropPreviewFactor)*0.5), 
+	framingRectInPreview = new Rect((int) (sz.width*(1-cropPreviewFactor)*0.5), 
     					   (int) (sz.height*(1-cropPreviewFactor)*0.5), 
     					   (int) (sz.width*(1-cropPreviewFactor*0.5)), 
     					   (int) (sz.height*(1-cropPreviewFactor*0.5)));
-    Log.d(TAG, "Calculated framing rect: " + framingRect); 
+    Log.d(TAG, "Calculated framing rect in preview: " + framingRectInPreview); 
     return framingRectInPreview;
   }
   

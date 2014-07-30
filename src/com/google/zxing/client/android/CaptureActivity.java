@@ -129,7 +129,6 @@ public class CaptureActivity extends Activity {
 		String date = formatter.format(new Date(rawResult.getTimestamp()));
 
 		CharSequence displayContents = resultHandler.getDisplayContents();
-		String content = (String) displayContents;
 		
 		int a = 0;
 		a++;

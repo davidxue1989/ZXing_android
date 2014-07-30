@@ -16,7 +16,22 @@
 
 package com.google.zxing.client.android;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
+
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
+import android.hardware.Camera.Size;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
+import android.widget.ImageView;
+
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
@@ -25,20 +40,11 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
-
-import java.io.ByteArrayOutputStream;
-import java.util.Map;
-
 final class DecodeHandler extends Handler {
 
   private static final String TAG = DecodeHandler.class.getSimpleName();
 
-  private final CaptureActivity activity;
+  private CaptureActivity activity;
   private final MultiFormatReader multiFormatReader;
   private boolean running = true;
 
@@ -69,11 +75,41 @@ final class DecodeHandler extends Handler {
    * @param width  The width of the preview frame.
    * @param height The height of the preview frame.
    */
-  private void decode(byte[] data, int width, int height) {
+  private void decode(byte[] data, int width, int height) {	  
     long start = System.currentTimeMillis();
     Result rawResult = null;
     PlanarYUVLuminanceSource source = activity.getCameraManager().buildLuminanceSource(data, width, height);
     if (source != null) {
+    	
+
+    	//dxdebug
+////    	// Convert to JPG
+////    	Size previewSize = activity.getCameraManager().camera.getParameters().getPreviewSize(); 
+////    	YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, previewSize.width, previewSize.height, null);
+////    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+////    	yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width, previewSize.height), 80, baos);
+////    	byte[] jdata = baos.toByteArray();
+////    	// Convert to Bitmap
+////    	final Bitmap bmp = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
+//        
+//
+//        int[] pixels = source.renderThumbnail();
+//        int w = source.getThumbnailWidth();
+//        int h = source.getThumbnailHeight();
+//        final Bitmap bmp = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
+//
+//    	if (bmp != null) {
+//    		activity.runOnUiThread(new Runnable() {
+//    			@Override
+//    			public void run() {
+//    				ImageView iv = (ImageView) activity.findViewById(R.id.debug_image_view);
+//    				iv.setImageBitmap(bmp);
+//    			}
+//    		});
+//    	}
+    	
+    	
+    	
       BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
       try {
         rawResult = multiFormatReader.decodeWithState(bitmap);
@@ -92,7 +128,7 @@ final class DecodeHandler extends Handler {
       if (handler != null) {
         Message message = Message.obtain(handler, R.id.decode_succeeded, rawResult);
         Bundle bundle = new Bundle();
-        bundleThumbnail(source, bundle);        
+        bundleThumbnail(source, bundle);
         message.setData(bundle);
         message.sendToTarget();
       }
