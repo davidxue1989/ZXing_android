@@ -75,7 +75,7 @@ public class CaptureActivity extends Activity {
 		ImageButton btnLOScan = (ImageButton) findViewById(R.id.btn_img_scan);
 		if (!isCCC) {
 			TextView titleText = (TextView) findViewById(R.id.title_capture);
-			titleText.setText("请将维码放入框中，即可自动扫描");
+			titleText.setText("请将二维码放入框中，即可自动扫描");
 			LinearLayout botBar = (LinearLayout) findViewById(R.id.bottombar_capture);
 
 			LinearLayout scanLayout = (LinearLayout) findViewById(R.id.btn_lo_scan);

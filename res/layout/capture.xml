@@ -41,7 +41,7 @@
         android:textAlignment="center"
         android:textColor="@android:color/primary_text_dark"
         android:textSize="25sp"
-                    android:text="请将三维码放入框中，点击扫面"
+                    android:text="请将三维码放入框中，点击扫描"
         
         ccc:fontName="Raleway-Bold.ttf" />
         <ImageView
