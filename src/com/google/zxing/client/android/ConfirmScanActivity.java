@@ -11,6 +11,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.google.zxing.client.android.camera.CameraManager;
+
 public class ConfirmScanActivity extends Activity {
 	Bitmap bm = null;
 	
@@ -50,7 +52,7 @@ public class ConfirmScanActivity extends Activity {
 				bm = null;
 			}
 			
-			bm = CaptureActivity.getCCCPhoto(this, 90);			
+			bm = CameraManager.getCCCPhoto(this, 90);			
 			
 			ImageView iv = (ImageView) findViewById(R.id.image);
 			

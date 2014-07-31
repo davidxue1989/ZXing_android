@@ -20,8 +20,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -29,12 +27,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.google.zxing.Result;
 import com.google.zxing.client.android.camera.CameraManager;
 import com.google.zxing.client.android.camera.CustomFontTextView;
@@ -43,13 +40,12 @@ import com.google.zxing.client.android.result.ResultHandlerFactory;
 
 public class CaptureActivity extends Activity {
 	public boolean isCCC = false;
-	public static String path = "";
 	public static final int CONFIRM_REQCODE = 123;
 	
 	private CameraManager cameraManager;
 	  private CaptureActivityHandler handler;
 	  
-    private RelativeLayout mLayout;
+    private FrameLayout mLayout;
     
 
     public CameraManager getCameraManager() {
@@ -73,16 +69,8 @@ public class CaptureActivity extends Activity {
 		Bundle b = null;
 		if (intent != null)
 			b = intent.getExtras();
-		if (b != null) {
+		if (b != null)
 			isCCC = b.getBoolean("isCCC");
-			if (isCCC) {
-				path = b.getString("path");
-				if (path == null) {
-					path = "";
-					assert(false);
-				}
-			}
-		}
 
 		ImageButton btnLOScan = (ImageButton) findViewById(R.id.btn_img_scan);
 		if (!isCCC) {
@@ -111,7 +99,7 @@ public class CaptureActivity extends Activity {
 			}
 		});
 
-		mLayout = (RelativeLayout) findViewById(R.id.preview_frame);
+		mLayout = (FrameLayout) findViewById(R.id.preview_frame);
 		
 		
 	    //dxchanged
@@ -127,11 +115,26 @@ public class CaptureActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        
+        handler = null;
+        
         cameraManager = new CameraManager(this);
         cameraManager.startPreview(mLayout);
         
-        handler = null;
+		// get intent extras
+		Intent intent = getIntent();
+		Bundle b = null;
+		if (intent != null)
+			b = intent.getExtras();
+		if (b != null) {
+			if (isCCC) {
+				cameraManager.path = b.getString("path");
+				if (cameraManager.path == null) {
+					cameraManager.path = "";
+					assert (false);
+				}
+			}
+		}
     }
     
 
@@ -195,40 +198,6 @@ public class CaptureActivity extends Activity {
 		
 		Intent confirmIntent = new Intent(getApplicationContext(), ConfirmScanActivity.class);
 		startActivityForResult(confirmIntent, CONFIRM_REQCODE);
-	}
-	
-	public static Bitmap getCCCPhoto(Activity activity, float rotation) {
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-		Bitmap bitmap = BitmapFactory.decodeFile(path, options);
-		final float densityMultiplier = activity.getBaseContext().getResources().getDisplayMetrics().density;
-		int h = (int) (512 * densityMultiplier);
-		int w = (int) (h * bitmap.getWidth() / ((double) bitmap.getHeight()));
-		Bitmap bitmapScaled = Bitmap.createScaledBitmap(bitmap, w, h, true);
-		bitmap.recycle();
-		bitmap = null;
-		// createa matrix for the manipulation
-		Matrix matrix = new Matrix();
-		// resize the bit map
-		matrix.postScale(1, 1);
-		// rotate the Bitmap
-		matrix.postRotate(90);
-		// recreate the new Bitmap
-		Bitmap resizedBitmap = Bitmap.createBitmap(bitmapScaled, 0, 0, w, h, matrix, true);
-		
-
-		//crop the bitmap
-		float cropFactor = 0.6f;				
-		int width = (int)(resizedBitmap.getWidth()*cropFactor);
-		int height = (int)(resizedBitmap.getHeight()*cropFactor);				
-		int dimension = Math.min(width, height);
-		int startX = (int) ((resizedBitmap.getWidth() - dimension)*0.5);
-		int startY = (int) ((resizedBitmap.getHeight() - dimension)*0.5);	
-		Bitmap bm = Bitmap.createBitmap(resizedBitmap, startX, startY, dimension, dimension);
-		resizedBitmap.recycle();
-		resizedBitmap = null;
-		
-		return bm;
 	}
 	
 

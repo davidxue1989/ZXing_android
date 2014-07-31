@@ -14,10 +14,11 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
@@ -42,7 +43,7 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
 
     protected Activity mActivity;
     private SurfaceHolder mHolder;
-    private RelativeLayout mLayout;
+    private FrameLayout mLayout;
     protected Camera mCamera;
     protected List<Camera.Size> mPreviewSizeList;
     protected List<Camera.Size> mPictureSizeList;
@@ -83,7 +84,7 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
     }
     
     
-    public C2SCameraPreview(Activity activity, Camera cam, LayoutMode mode, RelativeLayout layout, PreviewReadyCallback cb) {
+    public C2SCameraPreview(Activity activity, Camera cam, LayoutMode mode, FrameLayout layout, PreviewReadyCallback cb) {
         super(activity); // Always necessary
         mActivity = activity;
         mLayoutMode = mode;
@@ -97,9 +98,10 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
         mPictureSizeList = cameraParams.getSupportedPictureSizes();
         
         mLayout = layout;
-        LayoutParams previewLayoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        previewLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        FrameLayout.LayoutParams previewLayoutParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        previewLayoutParams.gravity = Gravity.CENTER;
         mLayout.addView(this, 0, previewLayoutParams);
+        
 
         mPreviewReadyCallback = cb;
     }
@@ -264,7 +266,7 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
             }
         }
 
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)this.getLayoutParams();
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)this.getLayoutParams();
 
         int layoutHeight = (int) (tmpLayoutHeight * fact);
         int layoutWidth = (int) (tmpLayoutWidth * fact);
@@ -281,6 +283,10 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
                 layoutParams.topMargin = mCenterPosY - (layoutHeight / 2);
                 layoutParams.leftMargin = mCenterPosX - (layoutWidth / 2);
             }
+            
+            //dxchange
+            layoutParams.gravity = Gravity.CENTER;
+            
             this.setLayoutParams(layoutParams); // this will trigger another surfaceChanged invocation.
             layoutChanged = true;
         } else {
