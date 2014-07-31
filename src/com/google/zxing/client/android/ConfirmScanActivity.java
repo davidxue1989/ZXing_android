@@ -1,7 +1,5 @@
 package com.google.zxing.client.android;
 
-import com.google.zxing.client.android.camera.CameraManager;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -11,6 +9,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.google.zxing.client.android.camera.CameraManager;
 
 public class ConfirmScanActivity extends Activity {
 	Bitmap bm = null;
