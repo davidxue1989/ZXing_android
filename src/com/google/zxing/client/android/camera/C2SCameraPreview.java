@@ -213,26 +213,29 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
 
     protected Camera.Size determinePictureSize(Camera.Size previewSize) {
         Camera.Size retSize = null;
-        for (Camera.Size size : mPictureSizeList) {
-            if (size.equals(previewSize)) {
-                return size;
-            }
-        }
+//        for (Camera.Size size : mPictureSizeList) {
+//            if (size.equals(previewSize)) {
+//                return size;
+//            }
+//        }
         
         if (DEBUGGING) { Log.v(LOG_TAG, "Same picture size not found."); }
         
-        // if the preview size is not supported as a picture size
-        float reqRatio = ((float) previewSize.width) / previewSize.height;
-        float curRatio, deltaRatio;
-        float deltaRatioMin = Float.MAX_VALUE;
-        for (Camera.Size size : mPictureSizeList) {
-            curRatio = ((float) size.width) / size.height;
-            deltaRatio = Math.abs(reqRatio - curRatio);
-            if (deltaRatio < deltaRatioMin) {
-                deltaRatioMin = deltaRatio;
-                retSize = size;
-            }
-        }
+//        // if the preview size is not supported as a picture size
+//        float reqRatio = ((float) previewSize.width) / previewSize.height;
+//        float curRatio, deltaRatio;
+//        float deltaRatioMin = Float.MAX_VALUE;
+//        for (Camera.Size size : mPictureSizeList) {
+//            curRatio = ((float) size.width) / size.height;
+//            deltaRatio = Math.abs(reqRatio - curRatio);
+//            if (deltaRatio < deltaRatioMin) {
+//                deltaRatioMin = deltaRatio;
+//                retSize = size;
+//            }
+//        }
+        
+        //dxnote: don't care about distortion for taking photos, so just use the highest resolution possible
+        retSize = mPictureSizeList.get(0);
         
         return retSize;
     }
