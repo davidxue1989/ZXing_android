@@ -16,16 +16,17 @@
 
 package com.google.zxing.client.android.camera;
 
-import android.app.Activity;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.google.zxing.client.android.CaptureActivity;
+
 final class PreviewCallback implements Camera.PreviewCallback {
 
-	public Activity activity;
+	public CaptureActivity activity;
 	
 	
 	private static final String TAG = PreviewCallback.class.getSimpleName();
@@ -33,7 +34,7 @@ final class PreviewCallback implements Camera.PreviewCallback {
 	private Handler previewHandler;
 	private int previewMessage;
 
-	PreviewCallback(Activity activity) {
+	PreviewCallback(CaptureActivity activity) {
 		this.activity = activity;
 	}
 
@@ -44,6 +45,9 @@ final class PreviewCallback implements Camera.PreviewCallback {
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
+		if (!activity.getCameraManager().isPreviewing()) {
+			return; //already quited previewing, we are only here because this thread is delayed
+		}
 		
 		Size previewSize = camera.getParameters().getPreviewSize();
 		Handler thePreviewHandler = previewHandler;

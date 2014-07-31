@@ -49,7 +49,7 @@ public class CaptureActivity extends Activity {
     private RelativeLayout mLayout;
     
 
-    CameraManager getCameraManager() {
+    public CameraManager getCameraManager() {
       return cameraManager;
     }
 

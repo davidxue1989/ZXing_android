@@ -413,12 +413,12 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
         mCamera.setOneShotPreviewCallback(callback);
     }
     
-    public void setPreviewCallback(PreviewCallback callback) {
-        if (null == mCamera) {
-            return;
-        }
-        mCamera.setPreviewCallback(callback);
-    }
+//    public void setPreviewCallback(PreviewCallback callback) {
+//        if (null == mCamera) {
+//            return;
+//        }
+//        mCamera.setPreviewCallback(callback);
+//    }
     
     public Camera.Size getPreviewSize() {
         return mPreviewSize;

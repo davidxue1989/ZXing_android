@@ -195,6 +195,9 @@ public synchronized boolean isOpen() {
 	private Runnable takePhoto = new Runnable() {
 		@Override
 		public void run() {
+			if (!previewing){
+				return; //already quited previewing, we are only here because this thread is delayed
+			}
 			camera.takePicture(shutterCallback, null, pictureCallback);
 			Log.v("take", "about to take");
 		}
