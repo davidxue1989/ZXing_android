@@ -1,5 +1,7 @@
 package com.google.zxing.client.android;
 
+import com.google.zxing.client.android.camera.CameraManager;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -49,7 +51,7 @@ public class ConfirmScanActivity extends Activity {
 				bm = null;
 			}
 			
-			bm = CaptureActivity.getCCCPhoto(this, 90);			
+			bm = CameraManager.getCCCPhoto(this, 90);			
 			
 			ImageView iv = (ImageView) findViewById(R.id.image);
 			
