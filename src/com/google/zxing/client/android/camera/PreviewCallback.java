@@ -44,6 +44,7 @@ final class PreviewCallback implements Camera.PreviewCallback {
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
+		
 		Size previewSize = camera.getParameters().getPreviewSize();
 		Handler thePreviewHandler = previewHandler;
 		if (previewSize != null && thePreviewHandler != null) {

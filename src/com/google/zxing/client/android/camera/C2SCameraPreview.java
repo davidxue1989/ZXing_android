@@ -398,7 +398,7 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
         mCamera.stopPreview();
         mCamera.release();
         mCamera = null;
-        
+        mHolder.removeCallback(this);
         mLayout.removeView(this); // This is necessary.
     }
 
