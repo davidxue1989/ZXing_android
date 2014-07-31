@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:ccc="http://schemas.android.com/apk/res-auto"
+    xmlns:ccc="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:background="@color/black"
-            android:gravity="center"
-            android:text="CONFIRM SCAN"
-            android:textColor="@color/status_text" />
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="fill_parent"
-            android:layout_height="0dip"
-            android:layout_weight="20"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter" 
-            android:layout_gravity="center"/>
+
+
+        <com.frenzysoft.ccc.CustomFontTextView
+        android:id="@+id/title_confirm"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="#000000"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@android:color/primary_text_dark"
+        android:textSize="25sp"
+                android:text="请确认三维码图像，点击确认继续"
+
+        ccc:fontName="Raleway-Bold.ttf" />
+        
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_gravity="center"
+        android:layout_weight="20"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter" />
 
     <LinearLayout
         android:id="@+id/bottombar_firm"
@@ -32,78 +38,75 @@
         android:orientation="horizontal"
         android:paddingTop="5dip" >
 
-            <View
-                android:layout_width="0dip"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/transparent" />
+        <View
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/transparent" />
 
-            <LinearLayout
-                android:id="@+id/btn_lo_rescan"
-                android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/btn_lo_rescan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:id="@+id/btn_img_rescan"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@null"
+                android:src="@drawable/rescanicon" />
+
+            <com.frenzysoft.ccc.CustomFontTextView
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_marginTop="-6dp"
+                android:background="@null"
                 android:gravity="center"
-                            android:layout_marginTop="-8dp"
-                
-                android:orientation="vertical" >
-
-                
-                <ImageButton
-                	android:id="@+id/btn_img_rescan"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/rescanicon" />
-                
-                <com.frenzysoft.ccc.CustomFontTextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-6dp"
-                    android:background="@null"
-                    android:gravity="center"
-                    android:text="重新扫描"
-                    android:textAlignment="center"
-                    android:textColor="#ffffff"
-                    android:textSize="12sp"
-                    ccc:fontName="MyriadPro-Regular.otf" />
-            
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/btn_lo_confirm"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                            android:layout_marginTop="-8dp"
-                
-                android:orientation="vertical" >
-                
-               <ImageButton
-                	android:id="@+id/btn_img_rescan"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/confirmicon" />
-                
-                <com.frenzysoft.ccc.CustomFontTextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-6dp"
-                    android:background="@null"
-                    android:gravity="center"
-                    android:text="确认"
-                    android:textAlignment="center"
-                    android:textColor="#ffffff"
-                    android:textSize="12sp"
-                    ccc:fontName="MyriadPro-Regular.otf" />
-                
-            </LinearLayout>
-
-            <View
-                android:layout_width="0dip"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/transparent" />
+                android:text="重新扫描"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                ccc:fontName="MyriadPro-Regular.otf" />
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btn_lo_confirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:id="@+id/btn_img_confirm"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@null"
+                android:src="@drawable/confirmicon" />
+
+            <com.frenzysoft.ccc.CustomFontTextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-6dp"
+                android:background="@null"
+                android:gravity="center"
+                android:text="确认"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                ccc:fontName="MyriadPro-Regular.otf" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/transparent" />
+    </LinearLayout>
 
 </LinearLayout>

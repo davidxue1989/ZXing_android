@@ -33,9 +33,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.zxing.Result;
 import com.google.zxing.client.android.camera.CameraManager;
+import com.google.zxing.client.android.camera.CustomFontTextView;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.android.result.ResultHandlerFactory;
 
@@ -84,7 +86,8 @@ public class CaptureActivity extends Activity {
 
 		ImageButton btnLOScan = (ImageButton) findViewById(R.id.btn_img_scan);
 		if (!isCCC) {
-			
+			TextView titleText = (TextView) findViewById(R.id.title_capture);
+			titleText.setText("请将维码放入框中，即可自动扫描");
 			LinearLayout botBar = (LinearLayout) findViewById(R.id.bottombar_capture);
 
 			LinearLayout scanLayout = (LinearLayout) findViewById(R.id.btn_lo_scan);

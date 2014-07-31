@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -21,7 +22,7 @@ public class ConfirmScanActivity extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_confirm_scan);
 		
-		LinearLayout btnLORescan = (LinearLayout) findViewById(R.id.btn_lo_rescan);
+		ImageButton btnLORescan = (ImageButton) findViewById(R.id.btn_img_rescan);
 		btnLORescan.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
@@ -30,7 +31,7 @@ public class ConfirmScanActivity extends Activity {
 			} 
 		});
 		
-		LinearLayout btnLOConfirm = (LinearLayout) findViewById(R.id.btn_lo_confirm);
+		ImageButton btnLOConfirm = (ImageButton) findViewById(R.id.btn_img_confirm);
 		btnLOConfirm.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
