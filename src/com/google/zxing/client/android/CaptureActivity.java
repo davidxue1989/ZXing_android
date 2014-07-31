@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -81,8 +82,13 @@ public class CaptureActivity extends Activity {
 			}
 		}
 
-		LinearLayout btnLOScan = (LinearLayout) findViewById(R.id.btn_lo_scan);
+		ImageButton btnLOScan = (ImageButton) findViewById(R.id.btn_img_scan);
 		if (!isCCC) {
+			
+			LinearLayout botBar = (LinearLayout) findViewById(R.id.bottombar_capture);
+
+			LinearLayout scanLayout = (LinearLayout) findViewById(R.id.btn_lo_scan);
+			botBar.removeView(scanLayout);
 			//disable scan button
 			btnLOScan.setVisibility(View.INVISIBLE);
 		}
@@ -93,7 +99,7 @@ public class CaptureActivity extends Activity {
 			}
 		});
 		
-		LinearLayout btnLOBack = (LinearLayout) findViewById(R.id.btn_lo_back);
+		ImageButton btnLOBack = (ImageButton) findViewById(R.id.btn_img_back);
 		btnLOBack.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
