@@ -236,9 +236,12 @@ public class C2SCameraPreview extends SurfaceView implements SurfaceHolder.Callb
         
         //dxnote: don't care about distortion for taking photos, so just use the highest resolution possible
 		float maxArea = 0;
-		for (Camera.Size size : mPictureSizeList)
-			if (size.width * size.height > maxArea)
+		for (Camera.Size size : mPictureSizeList){
+			if (size.width * size.height > maxArea){
+				maxArea = size.width * size.height;
 				retSize = size;
+			}
+		}
 		assert (retSize != null);
 		return retSize;
     }
