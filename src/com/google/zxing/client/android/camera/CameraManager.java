@@ -68,7 +68,7 @@ public final class CameraManager implements PreviewReadyCallback, Camera.AutoFoc
 	private C2SCameraPreview mPreview;
     private boolean previewing = false;
     private Rect framingRectInPreview;
-    public final static double cropPreviewFactor = 0.6f;
+    public final static double cropPreviewFactor = 0.8f;
     private AutoFocusManager autoFocusManager;
   
 
