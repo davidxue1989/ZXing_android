@@ -22,6 +22,7 @@ import java.util.Map;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera.Size;
@@ -82,7 +83,8 @@ final class DecodeHandler extends Handler {
     if (source != null) {
     	
 
-    	//dxdebug
+//    	//dxdebug
+//    	
 ////    	// Convert to JPG
 ////    	Size previewSize = activity.getCameraManager().camera.getParameters().getPreviewSize(); 
 ////    	YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21, previewSize.width, previewSize.height, null);
@@ -90,20 +92,29 @@ final class DecodeHandler extends Handler {
 ////    	yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width, previewSize.height), 80, baos);
 ////    	byte[] jdata = baos.toByteArray();
 ////    	// Convert to Bitmap
-////    	final Bitmap bmp = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
-//        
+////    	final Bitmap bmp = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);        
 //
 //        int[] pixels = source.renderThumbnail();
 //        int w = source.getThumbnailWidth();
 //        int h = source.getThumbnailHeight();
-//        final Bitmap bmp = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
+//		// create matrix for the manipulation
+//        Bitmap bmp = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
+//		Matrix matrix = new Matrix();
+//		// resize the bit map
+//		matrix.postScale(1, 1);
+//		// rotate the Bitmap
+//		matrix.postRotate(90);
+//		// recreate the new Bitmap
+//		final Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0, w, h, matrix, true);
+//		bmp.recycle();
+//		bmp = null;
 //
-//    	if (bmp != null) {
+//    	if (rotatedBitmap != null) {
 //    		activity.runOnUiThread(new Runnable() {
 //    			@Override
 //    			public void run() {
 //    				ImageView iv = (ImageView) activity.findViewById(R.id.debug_image_view);
-//    				iv.setImageBitmap(bmp);
+//    				iv.setImageBitmap(rotatedBitmap);
 //    			}
 //    		});
 //    	}

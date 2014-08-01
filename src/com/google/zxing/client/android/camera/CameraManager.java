@@ -68,7 +68,7 @@ public final class CameraManager implements PreviewReadyCallback, Camera.AutoFoc
 	private C2SCameraPreview mPreview;
     private boolean previewing = false;
     private Rect framingRectInPreview;
-    public final static double cropPreviewFactor = 0.8;
+    public final static double cropPreviewFactor = 0.6f;
     private AutoFocusManager autoFocusManager;
   
 
@@ -156,10 +156,20 @@ public synchronized boolean isOpen() {
    */
   public synchronized Rect getFramingRectInPreview() {
 	Size sz = mPreview.getPreviewSize();
-	framingRectInPreview = new Rect((int) (sz.width*(1-cropPreviewFactor)*0.5), 
-    					   (int) (sz.height*(1-cropPreviewFactor)*0.5), 
-    					   (int) (sz.width*(1-cropPreviewFactor*0.5)), 
-    					   (int) (sz.height*(1-cropPreviewFactor*0.5)));
+	
+	int dimension = (int) (Math.min(sz.width, sz.height)*cropPreviewFactor);
+	int startX = (int) ((sz.width - dimension)*0.5);
+	int startY = (int) ((sz.height - dimension)*0.5);
+	int endX = (int) ((sz.width + dimension)*0.5);
+	int endY = (int) ((sz.height + dimension)*0.5);
+	framingRectInPreview = new Rect(startX, startY, endX, endY);
+	
+//	framingRectInPreview = new Rect((int) (sz.width*(1-cropPreviewFactor)*0.5), 
+//    					   (int) (sz.height*(1-cropPreviewFactor)*0.5), 
+//    					   (int) (sz.width*(1+cropPreviewFactor)*0.5), 
+//    					   (int) (sz.height*(1+cropPreviewFactor)*0.5));
+	
+	
     Log.d(TAG, "Calculated framing rect in preview: " + framingRectInPreview); 
     return framingRectInPreview;
   }
