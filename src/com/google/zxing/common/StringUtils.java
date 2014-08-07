@@ -35,6 +35,8 @@ public final class StringUtils {
   private static final String EUC_JP = "EUC_JP";
   private static final String UTF8 = "UTF8";
   private static final String ISO88591 = "ISO8859_1";
+  private static final String GBK = "GB2312";
+
   private static final boolean ASSUME_SHIFT_JIS =
       SHIFT_JIS.equalsIgnoreCase(PLATFORM_DEFAULT_ENCODING) ||
       EUC_JP.equalsIgnoreCase(PLATFORM_DEFAULT_ENCODING);
@@ -61,6 +63,8 @@ public final class StringUtils {
     boolean canBeISO88591 = true;
     boolean canBeShiftJIS = true;
     boolean canBeUTF8 = true;
+    boolean canBeGBK = true;
+
     int utf8BytesLeft = 0;
     //int utf8LowChars = 0;
     int utf2BytesChars = 0;
@@ -89,6 +93,20 @@ public final class StringUtils {
 
       int value = bytes[i] & 0xFF;
 
+      //GBK stuff
+	  if (value > 0x7F)// 如果大于127，则可能是GB2312，就开始判断该字节，和下一个字节
+	  {
+		if (value > 0xB0 && value <= 0xF7)// 第一个字节再此范围内，则开始判断第二个自己
+		{
+			int value2 = bytes[i + 1] & 0xFF;
+            if (value2 > 0xA0 && value2 <= 0xF7) 
+            {
+                canBeGBK = true;
+            }
+		}
+	  }
+
+	  	
       // UTF-8 stuff
       if (canBeUTF8) {
         if (utf8BytesLeft > 0) {
@@ -186,6 +204,10 @@ public final class StringUtils {
     if (canBeShiftJIS && (ASSUME_SHIFT_JIS || sjisMaxKatakanaWordLength >= 3 || sjisMaxDoubleBytesWordLength >= 3)) {
       return SHIFT_JIS;
     }
+	if(canBeGBK){
+		return GBK;
+	}
+	
     // Distinguishing Shift_JIS and ISO-8859-1 can be a little tough for short words. The crude heuristic is:
     // - If we saw
     //   - only two consecutive katakana chars in the whole text, or

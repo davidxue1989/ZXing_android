@@ -16,6 +16,8 @@
 
 package com.google.zxing.qrcode.decoder;
 
+import android.util.Log;
+
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.FormatException;
 import com.google.zxing.common.BitSource;

@@ -16,6 +16,8 @@
 
 package com.google.zxing.client.android;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,7 +34,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.google.zxing.Result;
+import com.google.zxing.ResultMetadataType;
 import com.google.zxing.client.android.camera.CameraManager;
 import com.google.zxing.client.android.camera.CustomFontTextView;
 import com.google.zxing.client.android.result.ResultHandler;
@@ -176,7 +180,9 @@ public class CaptureActivity extends Activity {
 //		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 //		String date = formatter.format(new Date(rawResult.getTimestamp()));		  
 		//barcodeImageView.setImageBitmap(barcode);
-
+//	    List<byte[]> byteSegments = rawResult.getResultMetadata().get(ResultMetadataType.BYTE_SEGMENTS);
+	    
+		
 		CharSequence text = resultHandler.getDisplayContents();
 	    Intent intent = new Intent();
 	    intent.putExtra(ResultHandler.RESULT, text);
